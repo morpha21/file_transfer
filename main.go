@@ -1,12 +1,11 @@
 package main
 
 import (
-	"crypto/rand"
 	"time"
-	"io"
 	"fmt"
 	"net"
-	"log"
+	"file_transfer/send"
+	"file_transfer/error_handling"
 )
 
 
@@ -14,11 +13,11 @@ type FileServer struct {}
 
 func  (fs *FileServer) start () {
 	ln, err := net.Listen("tcp", ":3000")
-	checkErr(err)
+	error_handling.CheckErr(err)
 
 	for {
 		conn, err := ln.Accept()
-		checkErr(err)
+		error_handling.CheckErr(err)
 		go fs.readLoop(conn)
 	}
 }
@@ -28,32 +27,19 @@ func (fs *FileServer) readLoop(conn net.Conn){
 
 	for{
 		n, err := conn.Read(buf)
-		checkErr(err)
+		error_handling.CheckErr(err)
 		file := buf[:n]
 		fmt.Println(file)
 		fmt.Printf("received %d bytes over the network\n", n)
 	}
 }
 
-func sendFile(size int) error {
-	file := make([]byte, size)
-	_, err := io.ReadFull(rand.Reader, file)
-	checkErr(err)
-
-	conn, err := net.Dial("tcp", ":3000")
-	checkErr(err)
-
-	n, err := conn.Write(file)
-	checkErr(err)
-	fmt.Printf("written %d bytes over the network\n", n)
-	return nil
-}
 
 
 func main () {
 	go func () {
 		time.Sleep(4 * time.Second)
-		sendFile(1000)
+		send.SendFile(1000)
 	}()
 
 	server := &FileServer{}
@@ -61,8 +47,3 @@ func main () {
 }
 
 
-func checkErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
