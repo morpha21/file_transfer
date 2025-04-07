@@ -1,10 +1,8 @@
 package main
 
 import (
-	"time"
 	"fmt"
 	"net"
-	"file_transfer/send"
 	"file_transfer/error_handling"
 )
 
@@ -37,11 +35,6 @@ func (fs *FileServer) readLoop(conn net.Conn){
 
 
 func main () {
-	go func () {
-		time.Sleep(4 * time.Second)
-		send.SendFile(1000)
-	}()
-
 	server := &FileServer{}
 	server.start()
 }
