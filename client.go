@@ -9,8 +9,9 @@ import (
 
 
 func main () {
+	filePath := "volume1/source_file" 
 	time.Sleep(4 * time.Second)
-	send.SendFile(1000)
+	send.SendFile(filePath)
 }
 
 
